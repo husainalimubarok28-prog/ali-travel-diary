@@ -1,0 +1,119 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("TURSO_DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  avatar    String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     BlogPost[]
+  journals  JournalEntry[]
+  galleries GalleryItem[]
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String?
+  content     String
+  coverImage  String?
+  category    String   @default("travel-story")
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  publishedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  readingTime Int      @default(5)
+  tags        String   @default("")
+  featured    Boolean  @default(false)
+  published   Boolean  @default(false)
+}
+
+model JournalEntry {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  date        DateTime @default(now())
+  location    String
+  country     String
+  content     String
+  weather     String?
+  temperature Float?
+  mood        String?
+  images      String   @default("")
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GalleryItem {
+  id        String   @id @default(cuid())
+  src       String
+  alt       String
+  caption   String?
+  category  String   @default("street")
+  country   String?
+  city      String?
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model CountryData {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  nameId      String
+  flag        String
+  continent   String
+  description String
+  heroImage   String?
+  visited     String?
+  duration    String?
+  budget      Float    @default(0)
+  story       String?
+  content     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  platform    String   @default("youtube")
+  thumbnail   String?
+  country     String
+  duration    String?
+  views       Int      @default(0)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model Subscriber {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  active      Boolean  @default(true)
+  subscribedAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
