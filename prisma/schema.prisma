@@ -117,3 +117,19 @@ model ContactMessage {
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model City {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  countrySlug String
+  countryName String
+  description String
+  heroImage   String?
+  budget      Float    @default(0)
+  duration    String?
+  highlights  String   @default("")
+  coordinates String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

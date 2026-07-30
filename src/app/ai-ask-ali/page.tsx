@@ -44,7 +44,7 @@ export default function AIAskAliPage() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = (text: string) => {
+  const handleSend = async (text: string) => {
     if (!text.trim() || loading) return;
 
     const userMessage: AIMessage = {
@@ -58,24 +58,32 @@ export default function AIAskAliPage() {
     setInput("");
     setLoading(true);
 
-    setTimeout(() => {
-      const lower = text.toLowerCase();
-      let response = sampleResponses[lower] || sampleResponses[Object.keys(sampleResponses).find(k => lower.includes(k)) || ""];
-
-      if (!response) {
-        response = `Terima kasih atas pertanyaanmu tentang "${text}"!\n\nSeperti yang saya alami selama backpacking 21 negara, hal terpenting adalah persiapan. Berdasarkan pengalaman saya:\n\n1. 🎒 Siapkan budget dengan baik\n2. 📚 Riset negara tujuan\n3. 🤝 Jangan takut bertanya sama traveler lain\n4. 📸 Abadikan setiap momen\n5. 💪 Trust the process!\n\nAda hal lain yang ingin ditanyakan?`;
-      }
+    try {
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await res.json();
 
       const aiMessage: AIMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: response,
-        timestamp: new Date().toISOString(),
+        content: data.response || "Maaf, saya belum bisa menjawab pertanyaan itu. Coba tanya yang lain!",
+        timestamp: data.timestamp || new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-      setLoading(false);
-    }, 1500);
+    } catch {
+      const aiMessage: AIMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Maaf, terjadi kesalahan. Silakan coba lagi nanti.",
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+    }
+    setLoading(false);
   };
 
   return (
