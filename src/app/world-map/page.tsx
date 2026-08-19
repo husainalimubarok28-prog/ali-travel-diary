@@ -8,6 +8,15 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { countries } from "@/data/countries";
 import type { Country } from "@/types";
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+  ZoomableGroup,
+} from "react-simple-maps";
+
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 function CountryPopup({ country, onClose }: { country: Country; onClose: () => void }) {
   return (
@@ -102,10 +111,50 @@ function CountryPopup({ country, onClose }: { country: Country; onClose: () => v
   );
 }
 
+const countryCoords: Record<string, [number, number]> = {
+  "Indonesia": [106.8, -6.2],
+  "Malaysia": [101.7, 3.1],
+  "Singapore": [103.8, 1.3],
+  "Thailand": [100.5, 13.7],
+  "Vietnam": [105.8, 21.0],
+  "Cambodia": [104.9, 11.5],
+  "Myanmar": [96.1, 16.8],
+  "Laos": [102.6, 17.9],
+  "Philippines": [121.0, 14.5],
+  "Brunei": [114.9, 4.9],
+  "Japan": [139.7, 35.7],
+  "South Korea": [126.9, 37.5],
+  "China": [116.4, 39.9],
+  "Taiwan": [121.5, 25.0],
+  "Hong Kong": [114.1, 22.3],
+  "Macau": [113.5, 22.2],
+  "India": [77.2, 28.6],
+  "Nepal": [85.3, 27.7],
+  "Sri Lanka": [79.8, 6.9],
+  "Bangladesh": [90.4, 23.7],
+  "Maldives": [73.5, 4.1],
+  "Egypt": [31.2, 30.0],
+  "Turkey": [32.8, 39.9],
+  "United Arab Emirates": [55.3, 25.2],
+  "Saudi Arabia": [46.7, 24.7],
+  "Qatar": [51.5, 25.2],
+  "Oman": [58.5, 23.5],
+  "Jordan": [35.9, 31.9],
+  "Iran": [51.4, 35.7],
+  "Australia": [149.1, -35.3],
+  "United Kingdom": [-0.1, 51.5],
+  "France": [2.3, 48.8],
+  "Netherlands": [4.9, 52.3],
+  "Germany": [13.4, 52.5],
+  "Italy": [12.5, 41.9],
+  "Spain": [-3.7, 40.4],
+};
+
 export default function WorldMapPage() {
   const { t } = useLanguage();
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [filter, setFilter] = useState<string>("all");
+  const [tooltip, setTooltip] = useState("");
 
   const continents = ["all", ...Array.from(new Set(countries.map((c) => c.continent)))];
   const filteredCountries = filter === "all" ? countries : countries.filter((c) => c.continent === filter);
@@ -127,33 +176,71 @@ export default function WorldMapPage() {
 
       <section className="section-padding">
         <div className="container-custom">
-          {/* Map Visualization */}
-          <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-dark-800 dark:to-dark-900 mb-8">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-slate-400">
-                <span className="text-8xl block mb-4">🌍</span>
-                <p className="text-lg font-medium">Interactive World Map</p>
-                <p className="text-sm">(Mapbox/Leaflet integration coming soon)</p>
+          {/* Interactive SVG Map */}
+          <div className="relative w-full rounded-2xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-dark-800 dark:to-dark-900 mb-8 shadow-lg">
+            <ComposableMap
+              projectionConfig={{ scale: 150 }}
+              style={{ width: "100%", height: "auto" }}
+            >
+              <ZoomableGroup zoom={1} maxZoom={4}>
+                <Geographies geography={geoUrl}>
+                  {({ geographies }) =>
+                    geographies.map((geo) => {
+                      const isVisited = countries.some(
+                        (c) => geo.properties?.name?.toLowerCase().includes(c.name.toLowerCase()) ||
+                               c.name.toLowerCase().includes(geo.properties?.name?.toLowerCase())
+                      );
+                      return (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          fill={isVisited ? "#3b82f6" : "#e2e8f0"}
+                          stroke="#fff"
+                          strokeWidth={0.5}
+                          className="transition-colors duration-200"
+                          style={{
+                            default: { fill: isVisited ? "#3b82f6" : "#e2e8f0", outline: "none" },
+                            hover: { fill: isVisited ? "#2563eb" : "#cbd5e1", outline: "none", cursor: "pointer" },
+                            pressed: { fill: isVisited ? "#1d4ed8" : "#94a3b8", outline: "none" },
+                          }}
+                        />
+                      );
+                    })
+                  }
+                </Geographies>
+                {filteredCountries.map((country) => {
+                  const coords = countryCoords[country.name];
+                  if (!coords) return null;
+                  return (
+                    <Marker key={country.id} coordinates={coords}>
+                      <g
+                        onClick={() => setSelectedCountry(country)}
+                        onMouseEnter={() => setTooltip(country.name)}
+                        onMouseLeave={() => setTooltip("")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <circle r={8} fill="#f59e0b" stroke="#fff" strokeWidth={2} />
+                        <text
+                          textAnchor="middle"
+                          y={-14}
+                          fontSize={12}
+                          fill="#374151"
+                          className="dark:fill-slate-200"
+                        >
+                          {country.flag}
+                        </text>
+                      </g>
+                    </Marker>
+                  );
+                })}
+              </ZoomableGroup>
+            </ComposableMap>
+            {/* Tooltip */}
+            {tooltip && (
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white dark:bg-dark-800 px-4 py-2 rounded-xl shadow-lg text-sm font-medium z-10">
+                {tooltip}
               </div>
-            </div>
-            {/* Route animation placeholder */}
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1200 600">
-              <path
-                d="M200,300 L300,280 L400,320 L500,290 L600,310 L700,280 L800,300 L900,270 L1000,290"
-                fill="none"
-                stroke="url(#routeGradient)"
-                strokeWidth="3"
-                strokeDasharray="10 10"
-                className="animate-dash"
-              />
-              <defs>
-                <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#3b82f6" />
-                  <stop offset="50%" stopColor="#d946ef" />
-                  <stop offset="100%" stopColor="#3b82f6" />
-                </linearGradient>
-              </defs>
-            </svg>
+            )}
           </div>
 
           {/* Filter */}

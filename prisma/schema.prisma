@@ -118,6 +118,14 @@ model ContactMessage {
   createdAt DateTime @default(now())
 }
 
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  category  String   @default("general")
+  updatedAt DateTime @updatedAt
+}
+
 model City {
   id          String   @id @default(cuid())
   slug        String   @unique

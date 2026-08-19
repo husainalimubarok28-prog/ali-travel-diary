@@ -121,6 +121,10 @@ export function Navbar() {
 
           {session ? (
             <>
+              <Link href="/cms"
+                className={cn("hidden md:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors", scrolled ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30")}>
+                CMS
+              </Link>
               <Link href="/dashboard"
                 className={cn("p-2 rounded-lg transition-colors", scrolled ? "text-slate-600 hover:bg-slate-100" : "text-white/80 hover:bg-white/10")}>
                 📊

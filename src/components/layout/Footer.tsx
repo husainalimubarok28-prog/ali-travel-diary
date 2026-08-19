@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -48,12 +49,49 @@ const footerLinks = [
 
 export function Footer() {
   const { t } = useLanguage();
+  const [footerTagline, setFooterTagline] = useState("");
+
+  useEffect(() => {
+    fetch("/api/cms").then(r => r.json()).then(data => {
+      for (const cat of Object.values(data)) {
+        const found = (cat as any[]).find((c: any) => c.key === "footer_tagline");
+        if (found) { setFooterTagline(found.value); break; }
+      }
+    }).catch(() => {});
+  }, []);
 
   return (
     <footer className="relative bg-dark-900 text-slate-300 overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-20" />
 
       <div className="container-custom relative py-16">
+        {/* Stats Bar */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-12 text-center">
+          <div className="glass rounded-xl p-3">
+            <div className="text-2xl font-bold text-white">21</div>
+            <div className="text-xs text-slate-400">Negara</div>
+          </div>
+          <div className="glass rounded-xl p-3">
+            <div className="text-2xl font-bold text-white">25+</div>
+            <div className="text-xs text-slate-400">Kota</div>
+          </div>
+          <div className="glass rounded-xl p-3">
+            <div className="text-2xl font-bold text-white">8.000+</div>
+            <div className="text-xs text-slate-400">Foto & Video</div>
+          </div>
+          <div className="glass rounded-xl p-3">
+            <div className="text-2xl font-bold text-white">50.000+</div>
+            <div className="text-xs text-slate-400">Kilometer</div>
+          </div>
+          <div className="glass rounded-xl p-3">
+            <div className="text-2xl font-bold text-white">200+</div>
+            <div className="text-xs text-slate-400">Kuliner</div>
+          </div>
+          <div className="glass rounded-xl p-3">
+            <div className="text-2xl font-bold text-white">Rp200jt+</div>
+            <div className="text-xs text-slate-400">Biaya Total</div>
+          </div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {footerLinks.map((group) => (
             <div key={group.title}>
@@ -84,6 +122,9 @@ export function Footer() {
             &copy; {new Date().getFullYear()} Ali Travel Diary. {t("footer.rights")}.
             <br className="md:hidden" /> {t("footer.made")}
           </p>
+          {footerTagline && (
+            <p className="text-xs text-slate-600 text-center mt-1">{footerTagline}</p>
+          )}
 
           <div className="flex items-center gap-3">
             <a href="https://www.instagram.com/ali.traveldiary" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -25,6 +26,23 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const [profileAvatar, setProfileAvatar] = useState("");
+  const [cms, setCms] = useState<Record<string, { key: string; value: string }[]>>({});
+
+  useEffect(() => {
+    fetch("/api/profile").then(r => r.json()).then(data => {
+      if (data.avatar) setProfileAvatar(data.avatar);
+    }).catch(() => {});
+    fetch("/api/cms").then(r => r.json()).then(data => setCms(data)).catch(() => {});
+  }, []);
+
+  const cmsVal = (key: string, fallback: string) => {
+    for (const cat of Object.values(cms)) {
+      const found = cat.find((c: any) => c.key === key);
+      if (found) return found.value;
+    }
+    return fallback;
+  };
 
   return (
     <div className="overflow-hidden">
@@ -42,7 +60,11 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className="mb-6"
           >
-            <span className="inline-block text-7xl md:text-9xl mb-4 animate-float">✈️</span>
+            {profileAvatar ? (
+              <img src={profileAvatar} alt="Ali" className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4 border-primary-400 shadow-xl" />
+            ) : (
+              <span className="inline-block text-7xl md:text-9xl mb-4 animate-float">✈️</span>
+            )}
           </motion.div>
 
           <motion.h1
@@ -51,7 +73,7 @@ export default function HomePage() {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="text-4xl md:text-7xl lg:text-8xl font-bold text-white mb-6 font-display"
           >
-            {t("hero.title")}
+            {cmsVal("hero_title", t("hero.title"))}
           </motion.h1>
 
           <motion.div
@@ -61,7 +83,7 @@ export default function HomePage() {
             className="mb-8"
           >
             <span className="inline-block text-xl md:text-2xl text-primary-300 font-mono border-r-2 border-primary-400 pr-1 typing-animation">
-              {t("hero.subtitle")}
+              {cmsVal("hero_subtitle", t("hero.subtitle"))}
             </span>
           </motion.div>
 
@@ -72,11 +94,11 @@ export default function HomePage() {
             className="flex flex-wrap items-center justify-center gap-4"
           >
             <Link href="/countries">
-              <Button size="xl" variant="primary">{t("hero.cta")}</Button>
+              <Button size="xl" variant="primary">{cmsVal("hero_cta", t("hero.cta"))}</Button>
             </Link>
             <Link href="/timeline">
               <Button size="xl" variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                {t("hero.cta2")}
+                {cmsVal("hero_cta2", t("hero.cta2"))}
               </Button>
             </Link>
           </motion.div>
@@ -105,7 +127,7 @@ export default function HomePage() {
       <AnimatedSection className="section-padding">
         <div className="container-custom">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-display">
-            <span className="gradient-text">{t("featured.title")}</span>
+            <span className="gradient-text">{cmsVal("featured_title", t("featured.title"))}</span>
           </h2>
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-primary-200 to-accent-200 dark:from-dark-700 dark:to-dark-800">
@@ -116,11 +138,10 @@ export default function HomePage() {
             <div>
               <span className="text-sm font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wider">Featured</span>
               <h3 className="text-2xl md:text-3xl font-bold mt-2 mb-4">
-                Backpacking 21 Negara dalam 10 Bulan
+                {cmsVal("featured_heading", "Backpacking 21 Negara dalam 10 Bulan")}
               </h3>
               <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-                Bagaimana saya bisa mengunjungi 21 negara dalam 10 bulan dengan budget terbatas.
-                Tips, trik, dan pelajaran berharga dari perjalanan yang mengubah hidup.
+                {cmsVal("featured_text", "Bagaimana saya bisa mengunjungi 21 negara dalam 10 bulan dengan budget terbatas.")}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/blog/backpacking-21-negara-10-bulan">

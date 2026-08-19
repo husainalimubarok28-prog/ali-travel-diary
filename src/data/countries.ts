@@ -364,14 +364,14 @@ export const timelineEvents: TimelineEvent[] = [
 
 export const travelStatistics: TravelStatistic[] = [
   { label: "Negara Dikunjungi", value: 21, icon: "🌍", description: "Negara yang telah dijelajahi" },
-  { label: "Kota Dikunjungi", value: 45, icon: "🏙", description: "Kota di seluruh dunia" },
-  { label: "Penerbangan", value: 9, icon: "✈️", description: "Total penerbangan" },
-  { label: "Perjalanan Darat", value: 12, icon: "🚌", description: "Bus, kereta, travel darat" },
-  { label: "Total Kilometer", value: "40.000+", icon: "🛣", description: "Jarak tempuh total" },
-  { label: "Foto", value: "500+", icon: "📸", description: "Dokumentasi perjalanan" },
-  { label: "Video", value: "100+", icon: "🎥", description: "Konten video" },
-  { label: "Total Biaya", value: "Rp150jt+", icon: "💰", description: "Estimasi total perjalanan" },
-  { label: "Kuliner Dicoba", value: "200+", icon: "🍜", description: "Makanan lokal" },
+  { label: "Kota Dikunjungi", value: 25, icon: "🏙", description: "Kota di seluruh dunia" },
+  { label: "Penerbangan", value: 15, icon: "✈️", description: "Total penerbangan" },
+  { label: "Perjalanan Darat", value: 20, icon: "🚌", description: "Bus, kereta, travel darat" },
+  { label: "Total Kilometer", value: "50.000+", icon: "🛣", description: "Jarak tempuh total" },
+  { label: "Foto & Video", value: "8.000+", icon: "📸", description: "Dokumentasi perjalanan" },
+  { label: "Video", value: "200+", icon: "🎥", description: "Konten video" },
+  { label: "Total Biaya", value: "Rp200jt+", icon: "💰", description: "Estimasi total perjalanan" },
+  { label: "Kuliner Dicoba", value: "300+", icon: "🍜", description: "Makanan lokal" },
   { label: "Artikel", value: 50, icon: "📖", description: "Artikel dipublikasikan" },
 ];
 

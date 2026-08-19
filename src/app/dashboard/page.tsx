@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 
 const dashboardItems = [
+  { href: "/cms", icon: "📝", label: "CMS Editor", color: "from-emerald-500 to-teal-500" },
   { href: "/dashboard/countries", icon: "🌍", label: "Countries", color: "from-blue-500 to-cyan-500", count: 21 },
   { href: "/dashboard/cities", icon: "🏙️", label: "Cities", color: "from-green-500 to-teal-500", count: 45 },
   { href: "/dashboard/gallery", icon: "🖼️", label: "Gallery", color: "from-purple-500 to-pink-500", count: 500 },
