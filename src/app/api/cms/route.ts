@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createClient, Client } from "@libsql/client";
 
+export const dynamic = "force-dynamic";
+
 function getClient(): Client {
   return createClient({
     url: process.env.TURSO_DATABASE_URL || "file:./prisma/dev.db",
