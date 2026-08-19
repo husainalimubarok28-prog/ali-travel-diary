@@ -4,10 +4,12 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Video } from "@/types";
 
 export default function VideoPage() {
   const { data: videos, loading } = useFetch<Video[]>("/api/video", []);
+  const { get } = useCMS("video");
   const [search, setSearch] = useState("");
   const [platform, setPlatform] = useState<string>("all");
 
@@ -24,8 +26,8 @@ export default function VideoPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🎬</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Video Center</h1>
-            <p className="text-xl text-slate-300">YouTube • Instagram • TikTok</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("video_title", "Video Center")}</h1>
+            <p className="text-xl text-slate-300">{get("video_subtitle", "YouTube • Instagram • TikTok")}</p>
           </motion.div>
         </div>
       </section>

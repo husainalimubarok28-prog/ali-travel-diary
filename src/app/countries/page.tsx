@@ -6,10 +6,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Country } from "@/types";
 
 export default function CountriesPage() {
   const { data: countries, loading, error } = useFetch<Country[]>("/api/countries", []);
+  const { get } = useCMS("countries");
   const [continent, setContinent] = useState<string>("all");
   const [search, setSearch] = useState("");
 
@@ -27,7 +29,7 @@ export default function CountriesPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🌍</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Countries Explorer</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("countries_title", "Countries Explorer")}</h1>
             <p className="text-xl text-slate-300">{countries.length} negara dengan cerita uniknya masing-masing</p>
           </motion.div>
         </div>

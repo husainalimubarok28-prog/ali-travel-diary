@@ -3,10 +3,12 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { TravelStatistic } from "@/types";
 
 export default function StatisticsPage() {
   const { data: travelStatistics, loading } = useFetch<TravelStatistic[]>("/api/settings/travelStatistics", []);
+  const { get } = useCMS("statistics");
 
   return (
     <div className="pt-20 min-h-screen">
@@ -15,8 +17,8 @@ export default function StatisticsPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">📊</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Travel Statistics</h1>
-            <p className="text-xl text-slate-300">Data dan statistik perjalanan Ali</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("statistics_title", "Travel Statistics")}</h1>
+            <p className="text-xl text-slate-300">{get("statistics_subtitle", "Data dan statistik perjalanan Ali")}</p>
           </motion.div>
         </div>
       </section>

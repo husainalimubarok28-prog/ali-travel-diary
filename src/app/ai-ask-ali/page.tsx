@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCMS } from "@/hooks/useCMS";
 import type { AIMessage } from "@/types";
 
 const suggestions = [
@@ -24,6 +25,7 @@ const sampleResponses: Record<string, string> = {
 
 export default function AIAskAliPage() {
   const { t } = useLanguage();
+  const { get } = useCMS("ai");
   const [messages, setMessages] = useState<AIMessage[]>([
     {
       id: "welcome",

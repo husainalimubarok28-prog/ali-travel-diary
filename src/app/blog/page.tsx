@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { BlogCategory } from "@/types";
 
 interface BlogPostCard {
@@ -34,6 +35,7 @@ const categories: { value: BlogCategory | "all"; label: string }[] = [
 
 export default function BlogPage() {
   const { data: blogPosts, loading } = useFetch<BlogPostCard[]>("/api/blog?published=true", []);
+  const { get } = useCMS("blog");
   const [category, setCategory] = useState<BlogCategory | "all">("all");
 
   const filtered = category === "all" ? blogPosts : blogPosts.filter((p) => p.category === category);
@@ -45,8 +47,8 @@ export default function BlogPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">📝</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Blog</h1>
-            <p className="text-xl text-slate-300">Cerita, tips, dan panduan backpacking dari Ali</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("blog_title", "Blog")}</h1>
+            <p className="text-xl text-slate-300">{get("blog_subtitle", "Cerita, tips, dan panduan backpacking dari Ali")}</p>
           </motion.div>
         </div>
       </section>

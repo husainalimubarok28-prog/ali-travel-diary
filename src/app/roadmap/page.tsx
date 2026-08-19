@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useCMS } from "@/hooks/useCMS";
 
 const roadmapPhases = [
   {
@@ -66,6 +67,7 @@ const roadmapPhases = [
 ];
 
 export default function RoadmapPage() {
+  const { get } = useCMS("roadmap");
   return (
     <div className="pt-20 min-h-screen">
       <section className="relative py-24 overflow-hidden">
@@ -73,8 +75,8 @@ export default function RoadmapPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🗺️</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Future Roadmap</h1>
-            <p className="text-xl text-slate-300">Website modular yang siap berkembang</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("roadmap_title", "Future Roadmap")}</h1>
+            <p className="text-xl text-slate-300">{get("roadmap_subtitle", "Website modular yang siap berkembang")}</p>
           </motion.div>
         </div>
       </section>

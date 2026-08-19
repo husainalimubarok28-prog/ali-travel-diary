@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { MediaCategory } from "@/types";
 
 interface GalleryItem {
@@ -28,6 +29,7 @@ const categories: { value: MediaCategory | "all"; label: string }[] = [
 
 export default function GalleryPage() {
   const { data: items, loading } = useFetch<GalleryItem[]>("/api/gallery", []);
+  const { get } = useCMS("gallery");
   const [category, setCategory] = useState<MediaCategory | "all">("all");
   const [country, setCountry] = useState<string>("all");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
@@ -47,7 +49,7 @@ export default function GalleryPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🖼️</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Gallery</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("gallery_title", "Gallery")}</h1>
             <p className="text-xl text-slate-300">{items.length} foto perjalanan Ali dari seluruh dunia</p>
           </motion.div>
         </div>

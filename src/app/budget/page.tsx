@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Country } from "@/types";
 
 export default function BudgetPage() {
   const { data: countries, loading } = useFetch<Country[]>("/api/countries", []);
+  const { get } = useCMS("budget");
 
   return (
     <div className="pt-20 min-h-screen">
@@ -17,8 +19,8 @@ export default function BudgetPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">💰</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Travel Budget</h1>
-            <p className="text-xl text-slate-300">Rincian biaya perjalanan Ali di setiap negara</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("budget_title", "Travel Budget")}</h1>
+            <p className="text-xl text-slate-300">{get("budget_subtitle", "Rincian biaya perjalanan Ali di setiap negara")}</p>
           </motion.div>
         </div>
       </section>

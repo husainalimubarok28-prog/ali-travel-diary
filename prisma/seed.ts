@@ -15,6 +15,15 @@ import { serializeCountry } from "../src/lib/countryUtils";
 
 const prisma = new PrismaClient();
 
+function uid(): string {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
+
+const CMS_CONTENT: { key: string; value: string; category: string }[] = [
+  { key: "countries_title", value: "Countries Explorer", category: "countries" },
+  { key: "countries_subtitle", value: "Negara-negara dengan cerita uniknya masing-masing", category: "countries" },
+];
+
 const SETTINGS: Record<string, unknown> = {
   hero: {
     title: "Jelajahi Dunia Bersama Ali",
@@ -168,6 +177,16 @@ async function main() {
     });
   }
   console.log(`Testimonials seeded: ${testimonials.length}`);
+
+  // CMS Content Blocks
+  for (const item of CMS_CONTENT) {
+    const id = uid();
+    await prisma.$executeRawUnsafe(
+      `INSERT OR IGNORE INTO SiteContent (id, key, value, category) VALUES (?, ?, ?, ?)`,
+      id, item.key, item.value, item.category
+    );
+  }
+  console.log(`CMS content blocks seeded: ${CMS_CONTENT.length}`);
 
   console.log("\nAdmin user:", admin.email);
   console.log("Password: admin123");

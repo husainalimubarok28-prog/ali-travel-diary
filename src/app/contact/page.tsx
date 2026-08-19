@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCMS } from "@/hooks/useCMS";
 
 const contacts = [
   { icon: "💬", label: "WhatsApp", value: "+62 82 342023235", href: "https://wa.me/6282342023235" },
@@ -15,6 +16,7 @@ const contacts = [
 
 export default function ContactPage() {
   const { t } = useLanguage();
+  const { get } = useCMS("contact");
 
   return (
     <div className="pt-20 min-h-screen">
@@ -24,7 +26,7 @@ export default function ContactPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">📞</span>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{t("contact.title")}</h1>
-            <p className="text-xl text-slate-300">Mari terhubung! Ada pertanyaan atau ingin kolaborasi?</p>
+            <p className="text-xl text-slate-300">{get("contact_subtitle", "Mari terhubung! Ada pertanyaan atau ingin kolaborasi?")}</p>
           </motion.div>
         </div>
       </section>

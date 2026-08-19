@@ -106,6 +106,8 @@ const fieldNames: Record<string, string> = {
   community_title: "Judul Komunitas",
   community_subtitle: "Subtitle Komunitas",
   search_title: "Judul Search",
+  countries_title: "Judul Countries",
+  countries_subtitle: "Subtitle Countries",
   journal_title: "Judul Journal",
   journal_subtitle: "Subtitle Journal",
   ai_title: "Judul AI",

@@ -3,10 +3,12 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { VisaInfo } from "@/types";
 
 export default function VisaPage() {
   const { data: visaInfoList, loading } = useFetch<VisaInfo[]>("/api/settings/visaInfo", []);
+  const { get } = useCMS("visa");
 
   return (
     <div className="pt-20 min-h-screen">
@@ -15,8 +17,8 @@ export default function VisaPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🛂</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Visa Center</h1>
-            <p className="text-xl text-slate-300">Informasi visa lengkap untuk backpacker Indonesia</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("visa_title", "Visa Center")}</h1>
+            <p className="text-xl text-slate-300">{get("visa_subtitle", "Informasi visa lengkap untuk backpacker Indonesia")}</p>
           </motion.div>
         </div>
       </section>

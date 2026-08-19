@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { useCMS } from "@/hooks/useCMS";
 
 const resources = [
   { title: "Proposal Student Immersion", desc: "Download proposal program Student Immersion", icon: "📄", type: "PDF" },
@@ -14,6 +15,7 @@ const resources = [
 ];
 
 export default function ResourcesPage() {
+  const { get } = useCMS("resources");
   return (
     <div className="pt-20 min-h-screen">
       <section className="relative py-24 overflow-hidden">
@@ -21,8 +23,8 @@ export default function ResourcesPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">📦</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Travel Resources</h1>
-            <p className="text-xl text-slate-300">Download template dan dokumen perjalanan gratis</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("resources_title", "Travel Resources")}</h1>
+            <p className="text-xl text-slate-300">{get("resources_subtitle", "Download template dan dokumen perjalanan gratis")}</p>
           </motion.div>
         </div>
       </section>

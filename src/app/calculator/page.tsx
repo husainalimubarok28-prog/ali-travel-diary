@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Country } from "@/types";
 
 export default function CalculatorPage() {
   const { data: countries, loading } = useFetch<Country[]>("/api/countries", []);
+  const { get } = useCMS("calculator");
   const [country, setCountry] = useState("");
   const [duration, setDuration] = useState(7);
   const [budget, setBudget] = useState(5000000);
@@ -39,8 +41,8 @@ export default function CalculatorPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🧮</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Backpacking Calculator</h1>
-            <p className="text-xl text-slate-300">Hitung estimasi biaya perjalananmu</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("calculator_title", "Backpacking Calculator")}</h1>
+            <p className="text-xl text-slate-300">{get("calculator_subtitle", "Hitung estimasi biaya perjalananmu")}</p>
           </motion.div>
         </div>
       </section>

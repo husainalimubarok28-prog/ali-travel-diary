@@ -4,10 +4,12 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { PackingItem } from "@/types";
 
 export default function ChecklistPage() {
   const { data: packingItems, loading } = useFetch<PackingItem[]>("/api/settings/packingItems", []);
+  const { get } = useCMS("checklist");
   const [checked, setChecked] = useState<string[]>([]);
   const categories = Array.from(new Set(packingItems.map((item) => item.category)));
 
@@ -24,8 +26,8 @@ export default function ChecklistPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">✅</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Backpacking Checklist</h1>
-            <p className="text-xl text-slate-300">Pastikan tidak ada yang ketinggalan!</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("checklist_title", "Backpacking Checklist")}</h1>
+            <p className="text-xl text-slate-300">{get("checklist_subtitle", "Pastikan tidak ada yang ketinggalan!")}</p>
           </motion.div>
         </div>
       </section>

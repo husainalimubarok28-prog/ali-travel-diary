@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Country, Video } from "@/types";
 
 interface BlogPostCard {
@@ -22,6 +23,7 @@ export default function SearchPage() {
   const { data: countries } = useFetch<Country[]>("/api/countries", []);
   const { data: blogPosts } = useFetch<BlogPostCard[]>("/api/blog?published=true", []);
   const { data: videos } = useFetch<Video[]>("/api/video", []);
+  const { get } = useCMS("search");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<SearchCategory>("all");
 
@@ -60,7 +62,7 @@ export default function SearchPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🔍</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Pencarian Global</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("search_title", "Pencarian Global")}</h1>
           </motion.div>
         </div>
       </section>

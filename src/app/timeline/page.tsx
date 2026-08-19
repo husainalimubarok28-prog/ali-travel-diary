@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { TimelineEvent } from "@/types";
 
 export default function TimelinePage() {
   const { t } = useLanguage();
   const { data: timelineEvents } = useFetch<TimelineEvent[]>("/api/settings/timelineEvents", []);
+  const { get } = useCMS("timeline");
 
   return (
     <div className="pt-20 min-h-screen">
@@ -19,7 +21,7 @@ export default function TimelinePage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">📅</span>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{t("timeline.title")}</h1>
-            <p className="text-xl text-slate-300">10 bulan • 21 negara • Tak terbatas cerita</p>
+            <p className="text-xl text-slate-300">{get("timeline_subtitle", "10 bulan • 21 negara • Tak terbatas cerita")}</p>
           </motion.div>
         </div>
       </section>

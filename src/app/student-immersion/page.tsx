@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 
 interface FaqItem {
   question: string;
@@ -13,6 +14,7 @@ interface FaqItem {
 
 export default function StudentImmersionPage() {
   const { data: faqStudentImmersion, loading } = useFetch<FaqItem[]>("/api/settings/faqImmersion", []);
+  const { get } = useCMS("immersion");
 
   return (
     <div className="pt-20 min-h-screen">
@@ -21,8 +23,8 @@ export default function StudentImmersionPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🎓</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Student Immersion</h1>
-            <p className="text-xl text-slate-300">Belajar sambil traveling, mengajar sambil berpetualang</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("immersion_title", "Student Immersion")}</h1>
+            <p className="text-xl text-slate-300">{get("immersion_subtitle", "Belajar sambil traveling, mengajar sambil berpetualang")}</p>
           </motion.div>
         </div>
       </section>

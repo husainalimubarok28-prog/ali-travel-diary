@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { JournalEntry } from "@/types";
 
 export default function JournalPage() {
   const { data: journalEntries, loading } = useFetch<JournalEntry[]>("/api/journal", []);
+  const { get } = useCMS("journal");
 
   return (
     <div className="pt-20 min-h-screen">
@@ -17,8 +19,8 @@ export default function JournalPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">📓</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Travel Journal</h1>
-            <p className="text-xl text-slate-300">Catatan harian perjalanan Ali. Lebih personal daripada blog.</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("journal_title", "Travel Journal")}</h1>
+            <p className="text-xl text-slate-300">{get("journal_subtitle", "Catatan harian perjalanan Ali. Lebih personal daripada blog.")}</p>
           </motion.div>
         </div>
       </section>

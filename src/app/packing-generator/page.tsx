@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Country } from "@/types";
 
 export default function PackingGeneratorPage() {
   const { data: countries, loading } = useFetch<Country[]>("/api/countries", []);
+  const { get } = useCMS("packing");
   const [country, setCountry] = useState("");
   const [season, setSeason] = useState("tropical");
   const [duration, setDuration] = useState(7);
@@ -37,8 +39,8 @@ export default function PackingGeneratorPage() {
         <div className="container-custom relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="text-6xl mb-4 block">🎒</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">Packing List Generator</h1>
-            <p className="text-xl text-slate-300">Dapatkan packing list customized untuk perjalananmu</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-display">{get("packing_title", "Packing List Generator")}</h1>
+            <p className="text-xl text-slate-300">{get("packing_subtitle", "Dapatkan packing list customized untuk perjalananmu")}</p>
           </motion.div>
         </div>
       </section>
