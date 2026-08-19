@@ -169,16 +169,6 @@ async function main() {
   }
   console.log(`Testimonials seeded: ${testimonials.length}`);
 
-  // Settings
-  for (const [key, value] of Object.entries(SETTINGS)) {
-    await prisma.setting.upsert({
-      where: { key },
-      update: { value: JSON.stringify(value) },
-      create: { key, value: JSON.stringify(value) },
-    });
-  }
-  console.log(`Settings seeded: ${Object.keys(SETTINGS).length}`);
-
   console.log("\nAdmin user:", admin.email);
   console.log("Password: admin123");
 }
