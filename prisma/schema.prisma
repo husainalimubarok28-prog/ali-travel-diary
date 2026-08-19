@@ -72,21 +72,64 @@ model GalleryItem {
 }
 
 model CountryData {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String
-  nameId      String
-  flag        String
-  continent   String
-  description String
-  heroImage   String?
-  visited     String?
-  duration    String?
-  budget      Float    @default(0)
-  story       String?
-  content     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  nameId          String
+  flag            String
+  continent       String
+  description     String
+  heroImage       String?
+  visited         String?
+  duration        String?
+  budget          Float    @default(0)
+  story           String?
+  content         String?
+  displayOrder    Int      @default(0)
+  coordinates     String   @default("[]")
+  video           String   @default("")
+  transport       String   @default("[]")
+  visa            String   @default("")
+  visaCost        Float    @default(0)
+  documents       String   @default("[]")
+  tips            String   @default("[]")
+  budgetBreakdown String   @default("[]")
+  food            String   @default("[]")
+  accommodation   String   @default("[]")
+  internet        String   @default("")
+  simCard         String   @default("")
+  money           String   @default("")
+  safety          String   @default("")
+  mosque          String   @default("[]")
+  halalFood       String   @default("")
+  bestExperience  String   @default("")
+  worstExperience String   @default("")
+  travelTips      String   @default("[]")
+  mistakes        String   @default("[]")
+  hiddenGems      String   @default("[]")
+  ratings         String   @default("{}")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  name         String
+  role         String
+  avatar       String?
+  content      String
+  rating       Int      @default(5)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Video {

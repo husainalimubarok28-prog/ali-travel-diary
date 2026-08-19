@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
-import { videos } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { Video } from "@/types";
 
 export default function VideoPage() {
+  const { data: videos, loading } = useFetch<Video[]>("/api/video", []);
   const [search, setSearch] = useState("");
   const [platform, setPlatform] = useState<string>("all");
 
@@ -55,29 +57,40 @@ export default function VideoPage() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((video, i) => (
-              <motion.div key={video.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <a href={video.url} target="_blank" rel="noopener noreferrer">
-                  <Card className="p-0 overflow-hidden">
-                    <div className="aspect-video bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 relative flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center hover:bg-primary-600 transition-colors">
-                        <span className="text-white text-2xl">▶</span>
+          {loading ? (
+            <div className="flex justify-center py-24">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-24">
+              <span className="text-5xl block mb-4">🎬</span>
+              <p className="text-lg text-slate-500">Tidak ada video yang cocok.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((video, i) => (
+                <motion.div key={video.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                  <a href={video.url} target="_blank" rel="noopener noreferrer">
+                    <Card className="p-0 overflow-hidden">
+                      <div className="aspect-video bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 relative flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center hover:bg-primary-600 transition-colors">
+                          <span className="text-white text-2xl">▶</span>
+                        </div>
+                        <div className="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-semibold bg-black/60 text-white">
+                          {video.platform === "youtube" ? "📺" : video.platform === "instagram" ? "📸" : "🎵"}
+                        </div>
+                        <div className="absolute bottom-3 right-3 px-2 py-1 rounded-lg text-xs bg-black/60 text-white">{video.duration}</div>
                       </div>
-                      <div className="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-semibold bg-black/60 text-white">
-                        {video.platform === "youtube" ? "📺" : video.platform === "instagram" ? "📸" : "🎵"}
+                      <div className="p-4">
+                        <h3 className="font-semibold">{video.title}</h3>
+                        <p className="text-sm text-slate-500 mt-1">{video.country} • {new Intl.NumberFormat().format(video.views)} views • {new Date(video.publishedAt).toLocaleDateString()}</p>
                       </div>
-                      <div className="absolute bottom-3 right-3 px-2 py-1 rounded-lg text-xs bg-black/60 text-white">{video.duration}</div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold">{video.title}</h3>
-                      <p className="text-sm text-slate-500 mt-1">{video.country} • {new Intl.NumberFormat().format(video.views)} views • {new Date(video.publishedAt).toLocaleDateString()}</p>
-                    </div>
-                  </Card>
-                </a>
-              </motion.div>
-            ))}
-          </div>
+                    </Card>
+                  </a>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

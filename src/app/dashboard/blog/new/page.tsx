@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import RichTextEditor from "@/components/editor/RichTextEditor";
 
 export default function NewBlogPage() {
   const { data: session, status } = useSession();
@@ -75,22 +76,6 @@ export default function NewBlogPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const insertImage = async () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = async (e: Event) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      setContent((prev) => prev + `\n![image](${data.url})\n`);
-    };
-    input.click();
   };
 
   return (
@@ -180,26 +165,8 @@ export default function NewBlogPage() {
 
             {/* Content Editor */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium">Konten (Markdown)</label>
-                <Button type="button" variant="ghost" size="sm" onClick={insertImage}>
-                  🖼️ Insert Image
-                </Button>
-              </div>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={20}
-                placeholder="Tulis konten artikel di sini... Gunakan format Markdown.
-
-# Heading 1
-## Heading 2
-**bold** *italic*
-![alt text](image-url)
-- list item
-1. numbered list"
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-dark-600 bg-white dark:bg-dark-800 focus:outline-none focus:ring-2 focus:ring-primary-500 font-mono text-sm leading-relaxed"
-              />
+              <label className="text-sm font-medium mb-2 block">Konten (Rich Text Editor)</label>
+              <RichTextEditor value={content} onChange={setContent} />
             </div>
 
             {/* Actions */}

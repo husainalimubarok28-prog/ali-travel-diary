@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { countries } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
 import type { Country } from "@/types";
 import {
   ComposableMap,
@@ -152,6 +152,7 @@ const countryCoords: Record<string, [number, number]> = {
 
 export default function WorldMapPage() {
   const { t } = useLanguage();
+  const { data: countries, loading } = useFetch<Country[]>("/api/countries", []);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [filter, setFilter] = useState<string>("all");
   const [tooltip, setTooltip] = useState("");
@@ -261,22 +262,28 @@ export default function WorldMapPage() {
           </div>
 
           {/* Country Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {filteredCountries.map((country, index) => (
-              <motion.button
-                key={country.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => setSelectedCountry(country)}
-                className="glass-card p-4 text-center hover-lift group"
-              >
-                <span className="text-4xl block mb-2 group-hover:scale-110 transition-transform">{country.flag}</span>
-                <h3 className="font-semibold text-sm">{country.name}</h3>
-                <p className="text-xs text-slate-500 mt-1">{country.continent}</p>
-              </motion.button>
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-24">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+              {filteredCountries.map((country, index) => (
+                <motion.button
+                  key={country.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => setSelectedCountry(country)}
+                  className="glass-card p-4 text-center hover-lift group"
+                >
+                  <span className="text-4xl block mb-2 group-hover:scale-110 transition-transform">{country.flag}</span>
+                  <h3 className="font-semibold text-sm">{country.name}</h3>
+                  <p className="text-xs text-slate-500 mt-1">{country.continent}</p>
+                </motion.button>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

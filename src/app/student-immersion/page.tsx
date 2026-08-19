@@ -4,9 +4,16 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { faqStudentImmersion } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
 
 export default function StudentImmersionPage() {
+  const { data: faqStudentImmersion, loading } = useFetch<FaqItem[]>("/api/settings/faqImmersion", []);
+
   return (
     <div className="pt-20 min-h-screen">
       <section className="relative py-24 overflow-hidden">
@@ -63,14 +70,22 @@ export default function StudentImmersionPage() {
           {/* FAQ */}
           <div>
             <h2 className="text-3xl font-bold mb-8 text-center font-display">FAQ</h2>
-            <div className="max-w-2xl mx-auto space-y-4">
-              {faqStudentImmersion.map((faq, i) => (
-                <Card key={i}>
-                  <h3 className="font-bold mb-2">{faq.question}</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{faq.answer}</p>
-                </Card>
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary-500 border-t-transparent" />
+              </div>
+            ) : faqStudentImmersion.length === 0 ? (
+              <p className="text-center text-slate-500">Belum ada FAQ.</p>
+            ) : (
+              <div className="max-w-2xl mx-auto space-y-4">
+                {faqStudentImmersion.map((faq, i) => (
+                  <Card key={i}>
+                    <h3 className="font-bold mb-2">{faq.question}</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{faq.answer}</p>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Gallery */}

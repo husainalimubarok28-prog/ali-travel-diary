@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/Button";
-import { timelineEvents } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { TimelineEvent } from "@/types";
 
 export default function TimelinePage() {
   const { t } = useLanguage();
+  const { data: timelineEvents } = useFetch<TimelineEvent[]>("/api/settings/timelineEvents", []);
 
   return (
     <div className="pt-20 min-h-screen">

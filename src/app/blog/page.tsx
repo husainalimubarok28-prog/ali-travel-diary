@@ -4,9 +4,19 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { blogPosts } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
 import type { BlogCategory } from "@/types";
+
+interface BlogPostCard {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  coverImage?: string;
+  category: string;
+  publishedAt: string;
+  readingTime: number;
+}
 
 const categories: { value: BlogCategory | "all"; label: string }[] = [
   { value: "all", label: "Semua" },
@@ -23,6 +33,7 @@ const categories: { value: BlogCategory | "all"; label: string }[] = [
 ];
 
 export default function BlogPage() {
+  const { data: blogPosts, loading } = useFetch<BlogPostCard[]>("/api/blog?published=true", []);
   const [category, setCategory] = useState<BlogCategory | "all">("all");
 
   const filtered = category === "all" ? blogPosts : blogPosts.filter((p) => p.category === category);
@@ -58,28 +69,43 @@ export default function BlogPage() {
             ))}
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((post, i) => (
-              <motion.div key={post.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <Link href={`/blog/${post.slug}`}>
-                  <Card className="h-full">
-                    <div className="aspect-video rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 mb-4 flex items-center justify-center">
-                      <span className="text-4xl">📝</span>
-                    </div>
-                    <span className="text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wider">
-                      {post.category.replace("-", " ")}
-                    </span>
-                    <h3 className="font-bold mt-1 mb-2">{post.title}</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{post.excerpt}</p>
-                    <div className="flex items-center justify-between mt-4 text-xs text-slate-400">
-                      <span>📖 {post.readingTime} menit</span>
-                      <span>{new Date(post.publishedAt).toLocaleDateString("id-ID")}</span>
-                    </div>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-24">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-24">
+              <span className="text-5xl block mb-4">📝</span>
+              <p className="text-lg text-slate-500">Belum ada artikel di kategori ini.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((post, i) => (
+                <motion.div key={post.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                  <Link href={`/blog/${post.slug}`}>
+                    <Card className="h-full">
+                      <div className="aspect-video rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 mb-4 flex items-center justify-center overflow-hidden">
+                        {post.coverImage ? (
+                          <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-4xl">📝</span>
+                        )}
+                      </div>
+                      <span className="text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wider">
+                        {post.category.replace("-", " ")}
+                      </span>
+                      <h3 className="font-bold mt-1 mb-2">{post.title}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{post.excerpt}</p>
+                      <div className="flex items-center justify-between mt-4 text-xs text-slate-400">
+                        <span>📖 {post.readingTime} menit</span>
+                        <span>{new Date(post.publishedAt).toLocaleDateString("id-ID")}</span>
+                      </div>
+                    </Card>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

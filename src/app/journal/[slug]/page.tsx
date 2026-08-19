@@ -4,11 +4,20 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { journalEntries } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { JournalEntry } from "@/types";
 
 export default function JournalDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const entry = journalEntries.find((e) => e.slug === slug);
+  const { data: entry, loading } = useFetch<JournalEntry | null>(`/api/journal/${slug}`, null);
+
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   if (!entry) {
     return (
@@ -31,8 +40,8 @@ export default function JournalDetailPage() {
           <div className="flex flex-wrap gap-4 text-slate-400 text-sm">
             <span>📅 {new Date(entry.date).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span>
             <span>📍 {entry.location}, {entry.country}</span>
-            <span>🌡️ {entry.temperature}°C</span>
-            <span>😊 {entry.mood}</span>
+            {entry.temperature != null && <span>🌡️ {entry.temperature}°C</span>}
+            {entry.mood && <span>😊 {entry.mood}</span>}
           </div>
         </div>
       </section>

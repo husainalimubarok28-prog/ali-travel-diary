@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import RichTextEditor from "@/components/editor/RichTextEditor";
 
 export default function EditBlogPage() {
   const { data: session, status } = useSession();
@@ -75,21 +76,7 @@ export default function EditBlogPage() {
     router.refresh();
   };
 
-  const insertImage = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = async (e: Event) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      setContent((prev) => prev + `\n![image](${data.url})\n`);
-    };
-    input.click();
-  };
+  const insertImage = undefined;
 
   return (
     <div className="pt-20 min-h-screen">
@@ -143,12 +130,8 @@ export default function EditBlogPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium">Konten (Markdown)</label>
-                <Button type="button" variant="ghost" size="sm" onClick={insertImage}>🖼️ Insert Image</Button>
-              </div>
-              <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={20}
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-dark-600 bg-white dark:bg-dark-800 font-mono text-sm leading-relaxed" />
+              <label className="text-sm font-medium mb-2 block">Konten (Rich Text Editor)</label>
+              <RichTextEditor value={content} onChange={setContent} />
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-dark-700">

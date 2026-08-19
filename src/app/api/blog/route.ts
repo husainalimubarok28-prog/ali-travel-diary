@@ -11,9 +11,13 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
   const limit = parseInt(searchParams.get("limit") || "50");
+  const featured = searchParams.get("featured");
+  const published = searchParams.get("published");
 
   const where: Record<string, unknown> = {};
   if (category && category !== "all") where.category = category;
+  if (featured === "true") where.featured = true;
+  if (published === "true") where.published = true;
 
   const posts = await prisma.blogPost.findMany({
     where,

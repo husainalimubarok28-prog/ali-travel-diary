@@ -6,7 +6,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { travelStatistics, timelineEvents } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { TimelineEvent, TravelStatistic } from "@/types";
 
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
@@ -21,6 +22,8 @@ export default function AboutPage() {
   const { t } = useLanguage();
   const [profile, setProfile] = useState({ name: "", avatar: "" });
   const [cms, setCms] = useState<Record<string, { key: string; value: string }[]>>({});
+  const { data: travelStatistics } = useFetch<TravelStatistic[]>("/api/settings/travelStatistics", []);
+  const { data: timelineEvents } = useFetch<TimelineEvent[]>("/api/settings/timelineEvents", []);
 
   useEffect(() => {
     fetch("/api/profile").then(r => r.json()).then(data => {

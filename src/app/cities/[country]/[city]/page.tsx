@@ -5,13 +5,22 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { getCityBySlug } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { City } from "@/types";
 
 export default function CityPage() {
   const { country, city } = useParams<{ country: string; city: string }>();
-  const cityData = getCityBySlug(country, city);
+  const { data: cityData, loading } = useFetch<City | null>(`/api/cities/${city}`, null);
 
-  if (!cityData) {
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!cityData || cityData.countrySlug !== country) {
     return (
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <div className="text-center">

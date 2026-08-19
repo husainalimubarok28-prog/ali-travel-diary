@@ -4,11 +4,24 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
-import { countries, blogPosts, videos } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { Country, Video } from "@/types";
+
+interface BlogPostCard {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  tags: string;
+}
 
 type SearchCategory = "all" | "countries" | "blog" | "video" | "gallery";
 
 export default function SearchPage() {
+  const { data: countries } = useFetch<Country[]>("/api/countries", []);
+  const { data: blogPosts } = useFetch<BlogPostCard[]>("/api/blog?published=true", []);
+  const { data: videos } = useFetch<Video[]>("/api/video", []);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<SearchCategory>("all");
 
@@ -22,7 +35,7 @@ export default function SearchPage() {
     blog: blogPosts.filter((p) =>
       p.title.toLowerCase().includes(query.toLowerCase()) ||
       p.excerpt.toLowerCase().includes(query.toLowerCase()) ||
-      p.tags.some((t) => t.toLowerCase().includes(query.toLowerCase()))
+      (p.tags || "").toLowerCase().includes(query.toLowerCase())
     ),
     video: videos.filter((v) =>
       v.title.toLowerCase().includes(query.toLowerCase()) ||

@@ -4,9 +4,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { countries } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { Country } from "@/types";
 
 export default function PackingGeneratorPage() {
+  const { data: countries, loading } = useFetch<Country[]>("/api/countries", []);
   const [country, setCountry] = useState("");
   const [season, setSeason] = useState("tropical");
   const [duration, setDuration] = useState(7);
@@ -56,6 +58,7 @@ export default function PackingGeneratorPage() {
                   {countries.map((c) => (
                     <option key={c.id} value={c.slug}>{c.flag} {c.name}</option>
                   ))}
+                  {!loading && countries.length === 0 && <option value="">Belum ada negara</option>}
                 </select>
               </div>
 

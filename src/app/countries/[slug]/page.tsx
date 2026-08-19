@@ -6,12 +6,21 @@ import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { getCountryBySlug } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { Country } from "@/types";
 
 export default function CountryDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { t } = useLanguage();
-  const country = getCountryBySlug(slug);
+  const { data: country, loading } = useFetch<Country | null>(`/api/countries/${slug}`, null);
+
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   if (!country) {
     return (
@@ -91,30 +100,34 @@ export default function CountryDetailPage() {
         )}
 
         {/* Transport */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6 font-display">{t("country.transport")}</h2>
-          <div className="flex flex-wrap gap-3">
-            {country.transport.map((t, i) => (
-              <span key={i} className="glass-card px-4 py-2 text-sm font-medium">{t}</span>
-            ))}
-          </div>
-        </section>
+        {country.transport.length > 0 && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6 font-display">{t("country.transport")}</h2>
+            <div className="flex flex-wrap gap-3">
+              {country.transport.map((tr, i) => (
+                <span key={i} className="glass-card px-4 py-2 text-sm font-medium">{tr}</span>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Visa */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6 font-display">{t("country.visa")}</h2>
-          <Card className="max-w-xl">
-            <p className="font-semibold mb-2">{country.visa} {country.visaCost > 0 && `(Rp ${country.visaCost.toLocaleString()})`}</p>
-            {country.documents.length > 0 && (
-              <div className="mt-3">
-                <h4 className="text-sm font-semibold mb-1">Dokumen:</h4>
-                <ul className="list-disc list-inside text-sm text-slate-500 space-y-1">
-                  {country.documents.map((d, i) => <li key={i}>{d}</li>)}
-                </ul>
-              </div>
-            )}
-          </Card>
-        </section>
+        {country.visa && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6 font-display">{t("country.visa")}</h2>
+            <Card className="max-w-xl">
+              <p className="font-semibold mb-2">{country.visa} {country.visaCost > 0 && `(Rp ${country.visaCost.toLocaleString()})`}</p>
+              {country.documents.length > 0 && (
+                <div className="mt-3">
+                  <h4 className="text-sm font-semibold mb-1">Dokumen:</h4>
+                  <ul className="list-disc list-inside text-sm text-slate-500 space-y-1">
+                    {country.documents.map((d, i) => <li key={i}>{d}</li>)}
+                  </ul>
+                </div>
+              )}
+            </Card>
+          </section>
+        )}
 
         {/* Budget */}
         {country.budgetBreakdown.length > 0 && (
@@ -166,14 +179,16 @@ export default function CountryDetailPage() {
         )}
 
         {/* Accommodation */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6 font-display">Accommodation</h2>
-          <div className="flex flex-wrap gap-3">
-            {country.accommodation.map((a, i) => (
-              <span key={i} className="glass-card px-4 py-2 text-sm">{a}</span>
-            ))}
-          </div>
-        </section>
+        {country.accommodation.length > 0 && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6 font-display">Accommodation</h2>
+            <div className="flex flex-wrap gap-3">
+              {country.accommodation.map((a, i) => (
+                <span key={i} className="glass-card px-4 py-2 text-sm">{a}</span>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Internet & SIM */}
         <section className="grid md:grid-cols-2 gap-6">
@@ -234,17 +249,19 @@ export default function CountryDetailPage() {
         </section>
 
         {/* Travel Tips */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6 font-display">{t("country.tips")}</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {country.travelTips.map((tip, i) => (
-              <Card key={i} className="flex items-start gap-3">
-                <span className="text-2xl flex-shrink-0">💡</span>
-                <p className="text-slate-600 dark:text-slate-400">{tip}</p>
-              </Card>
-            ))}
-          </div>
-        </section>
+        {country.travelTips.length > 0 && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6 font-display">{t("country.tips")}</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {country.travelTips.map((tip, i) => (
+                <Card key={i} className="flex items-start gap-3">
+                  <span className="text-2xl flex-shrink-0">💡</span>
+                  <p className="text-slate-600 dark:text-slate-400">{tip}</p>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Hidden Gems */}
         {country.hiddenGems.length > 0 && (

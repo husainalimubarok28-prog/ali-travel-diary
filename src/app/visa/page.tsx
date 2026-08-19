@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
-import { visaInfoList } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { VisaInfo } from "@/types";
 
 export default function VisaPage() {
+  const { data: visaInfoList, loading } = useFetch<VisaInfo[]>("/api/settings/visaInfo", []);
+
   return (
     <div className="pt-20 min-h-screen">
       <section className="relative py-24 overflow-hidden">
@@ -20,8 +23,18 @@ export default function VisaPage() {
 
       <section className="section-padding">
         <div className="container-custom">
-          <div className="grid gap-6">
-            {visaInfoList.map((visa, i) => (
+          {loading ? (
+            <div className="flex justify-center py-24">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+            </div>
+          ) : visaInfoList.length === 0 ? (
+            <div className="text-center py-24">
+              <span className="text-5xl block mb-4">🛂</span>
+              <p className="text-lg text-slate-500">Belum ada data visa.</p>
+            </div>
+          ) : (
+            <div className="grid gap-6">
+              {visaInfoList.map((visa, i) => (
               <motion.div key={visa.country} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                 <Card>
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -79,7 +92,8 @@ export default function VisaPage() {
                 </Card>
               </motion.div>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </div>

@@ -12,7 +12,12 @@ export async function GET() {
     include: { author: { select: { name: true } } },
     orderBy: { date: "desc" },
   });
-  return NextResponse.json(entries);
+  return NextResponse.json(
+    entries.map(({ images, ...rest }) => ({
+      ...rest,
+      images: String(images ?? "").split("\n").map((i) => i.trim()).filter(Boolean),
+    }))
+  );
 }
 
 export async function POST(request: Request) {

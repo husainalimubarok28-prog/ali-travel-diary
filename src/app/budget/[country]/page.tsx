@@ -5,11 +5,20 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { getCountryBySlug } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { Country } from "@/types";
 
 export default function CountryBudgetPage() {
   const { country: slug } = useParams<{ country: string }>();
-  const country = getCountryBySlug(slug);
+  const { data: country, loading } = useFetch<Country | null>(`/api/countries/${slug}`, null);
+
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   if (!country) {
     return (

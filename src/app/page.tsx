@@ -7,7 +7,19 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { countries, testimonials, videos, blogPosts, travelStatistics } from "@/data/countries";
+import { useFetch } from "@/hooks/useFetch";
+import type { Country, Testimonial, Video, TravelStatistic } from "@/types";
+
+interface BlogPostCard {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  coverImage?: string;
+  category: string;
+  publishedAt: string;
+  readingTime: number;
+}
 
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
@@ -36,8 +48,20 @@ export default function HomePage() {
     return fb;
   };
 
+  const { data: videos } = useFetch<Video[]>("/api/video", []);
+  const { data: blogPosts } = useFetch<BlogPostCard[]>("/api/blog?featured=true&published=true&limit=3", []);
+  const { data: testimonials } = useFetch<Testimonial[]>("/api/testimonials", []);
+  const { data: countries } = useFetch<Country[]>("/api/countries", []);
+
+  let statsList: TravelStatistic[] = [];
+  try {
+    statsList = JSON.parse(v("stats", "[]"));
+  } catch {}
+
   let partners: string[] = [];
-  try { partners = JSON.parse(v("partners_list", "[]")); } catch {}
+  try {
+    partners = JSON.parse(v("partners_list", "[]"));
+  } catch {}
 
   return (
     <div className="overflow-hidden">
@@ -68,8 +92,10 @@ export default function HomePage() {
             <Link href="/timeline"><Button size="xl" variant="outline" className="border-white/30 text-white hover:bg-white/10">{v("hero_cta2", t("hero.cta2"))}</Button></Link>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 0.8 }} className="mt-16 grid grid-cols-3 md:grid-cols-6 gap-4 max-w-3xl mx-auto">
-            {travelStatistics.slice(0, 6).map((stat) => (
-              <div key={stat.label} className="glass rounded-2xl p-4 text-center">
+            {(statsList.length > 0 ? statsList.slice(0, 6) : [
+              { label: "Negara Dikunjungi", value: countries.length || 21, icon: "🌍" },
+            ]).map((stat, i) => (
+              <div key={stat.label || i} className="glass rounded-2xl p-4 text-center">
                 <div className="text-2xl mb-1">{stat.icon}</div>
                 <div className="text-xl md:text-2xl font-bold text-white">{stat.value}</div>
                 <div className="text-xs text-slate-400 mt-1">{stat.label}</div>
@@ -104,13 +130,13 @@ export default function HomePage() {
         <div className="container-custom">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-display"><span className="gradient-text">{v("video_preview_title", t("latest.title"))}</span></h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videos.map((video) => (
+            {videos.slice(0, 3).map((video) => (
               <a key={video.id} href={video.url} target="_blank" rel="noopener noreferrer" className="group">
                 <Card className="p-0 overflow-hidden">
                   <div className="aspect-video bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 relative">
                     <div className="absolute inset-0 flex items-center justify-center"><div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center group-hover:bg-primary-600 transition-colors"><span className="text-white text-2xl">▶</span></div></div>
                     <div className="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-semibold bg-black/60 text-white">{video.platform === "youtube" ? "📺 YouTube" : video.platform === "instagram" ? "📸 Instagram" : "🎵 TikTok"}</div>
-                    <div className="absolute bottom-3 right-3 px-2 py-1 rounded-lg text-xs bg-black/60 text-white">{video.duration}</div>
+                    {video.duration && <div className="absolute bottom-3 right-3 px-2 py-1 rounded-lg text-xs bg-black/60 text-white">{video.duration}</div>}
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold group-hover:text-primary-600 transition-colors">{video.title}</h3>
@@ -132,7 +158,9 @@ export default function HomePage() {
             {blogPosts.slice(0, 3).map((post) => (
               <Link key={post.id} href={`/blog/${post.slug}`}>
                 <Card className="h-full">
-                  <div className="aspect-video rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 mb-4 flex items-center justify-center text-slate-400">📝 {post.category}</div>
+                  <div className="aspect-video rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 mb-4 flex items-center justify-center text-slate-400 overflow-hidden">
+                    {post.coverImage ? <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" /> : <span>📝 {post.category}</span>}
+                  </div>
                   <span className="text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wider">{post.category}</span>
                   <h3 className="font-semibold mt-1 mb-2 line-clamp-2">{post.title}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{post.excerpt}</p>
@@ -187,31 +215,46 @@ export default function HomePage() {
           <span className="text-4xl mb-4 block">📬</span>
           <h2 className="text-3xl font-bold mb-4 font-display">{v("newsletter_title", t("newsletter.title"))}</h2>
           <p className="text-slate-500 dark:text-slate-400 mb-8">{v("newsletter_subtitle", t("newsletter.subtitle"))}</p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={e => e.preventDefault()}>
-            <input type="email" placeholder={v("newsletter_placeholder", t("newsletter.placeholder"))} className="flex-1 px-4 py-3 rounded-xl border border-slate-300 dark:border-dark-600 bg-white dark:bg-dark-800 focus:outline-none focus:ring-2 focus:ring-primary-500" required />
+          <form
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement)?.value;
+              if (!email) return;
+              await fetch("/api/newsletter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+              });
+              alert("Terima kasih! Berhasil berlangganan.");
+            }}
+          >
+            <input name="email" type="email" placeholder={v("newsletter_placeholder", t("newsletter.placeholder"))} className="flex-1 px-4 py-3 rounded-xl border border-slate-300 dark:border-dark-600 bg-white dark:bg-dark-800 focus:outline-none focus:ring-2 focus:ring-primary-500" required />
             <Button type="submit" variant="primary">{v("newsletter_cta", t("newsletter.cta"))}</Button>
           </form>
         </div>
       </AnimatedSection>
 
       {/* Testimonials */}
-      <AnimatedSection className="section-padding bg-slate-50 dark:bg-dark-800/50">
-        <div className="container-custom">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-display"><span className="gradient-text">{v("testimonial_title", t("testimonial.title"))}</span></h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {testimonials.map((testimonial) => (
-              <Card key={testimonial.id}>
-                <div className="flex items-center gap-2 mb-3">{Array.from({ length: testimonial.rating }).map((_, i) => <span key={i} className="text-yellow-400">★</span>)}</div>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 italic">&ldquo;{testimonial.content}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-300 to-accent-300 flex items-center justify-center text-white font-bold text-sm">{testimonial.name.charAt(0)}</div>
-                  <div><p className="font-semibold text-sm">{testimonial.name}</p><p className="text-xs text-slate-500">{testimonial.role}</p></div>
-                </div>
-              </Card>
-            ))}
+      {testimonials.length > 0 && (
+        <AnimatedSection className="section-padding bg-slate-50 dark:bg-dark-800/50">
+          <div className="container-custom">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-display"><span className="gradient-text">{v("testimonial_title", t("testimonial.title"))}</span></h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {testimonials.map((testimonial) => (
+                <Card key={testimonial.id}>
+                  <div className="flex items-center gap-2 mb-3">{Array.from({ length: testimonial.rating }).map((_, i) => <span key={i} className="text-yellow-400">★</span>)}</div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 italic">&ldquo;{testimonial.content}&rdquo;</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-300 to-accent-300 flex items-center justify-center text-white font-bold text-sm">{testimonial.name.charAt(0)}</div>
+                    <div><p className="font-semibold text-sm">{testimonial.name}</p><p className="text-xs text-slate-500">{testimonial.role}</p></div>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </AnimatedSection>
+        </AnimatedSection>
+      )}
 
       {/* Partners */}
       <AnimatedSection className="py-12">
