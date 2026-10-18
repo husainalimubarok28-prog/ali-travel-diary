@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useCMS } from "@/hooks/useCMS";
 
-const resources = [
+const defaultResources = [
   { title: "Proposal Student Immersion", desc: "Download proposal program Student Immersion", icon: "📄", type: "PDF" },
   { title: "Backpacking Checklist", desc: "Checklist lengkap persiapan backpacking", icon: "✅", type: "PDF" },
   { title: "Template Budget Travel", desc: "Excel template untuk tracking pengeluaran", icon: "📊", type: "XLSX" },
@@ -15,7 +15,8 @@ const resources = [
 ];
 
 export default function ResourcesPage() {
-  const { get } = useCMS("resources");
+  const { get, getJSON } = useCMS("resources");
+  const resources = getJSON("resources_list", defaultResources);
   return (
     <div className="pt-20 min-h-screen">
       <section className="relative py-24 overflow-hidden">

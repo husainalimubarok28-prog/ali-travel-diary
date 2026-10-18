@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useCMS } from "@/hooks/useCMS";
 
-const members = [
+const defaultMembers = [
   { name: "Rina Wijaya", country: "Thailand", bio: "Backpacker pemula yang terinspirasi dari Ali", avatar: "RW" },
   { name: "Ahmad Fauzi", country: "Turki", bio: "Peserta Student Immersion 2025", avatar: "AF" },
   { name: "Siti Nurhaliza", country: "Nepal", bio: "Solo traveler muslimah", avatar: "SN" },
@@ -13,7 +13,8 @@ const members = [
 ];
 
 export default function CommunityPage() {
-  const { get } = useCMS("community");
+  const { get, getJSON } = useCMS("community");
+  const members = getJSON("community_members", defaultMembers);
   return (
     <div className="pt-20 min-h-screen">
       <section className="relative py-24 overflow-hidden">
@@ -31,7 +32,7 @@ export default function CommunityPage() {
         <div className="container-custom space-y-12">
           {/* Members */}
           <div>
-            <h2 className="text-2xl font-bold mb-6 font-display">Member</h2>
+            <h2 className="text-2xl font-bold mb-6 font-display">{get("community_members_heading", "Member")}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {members.map((member, i) => (
                 <motion.div key={member.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
@@ -52,9 +53,9 @@ export default function CommunityPage() {
           <div className="text-center">
             <Card className="max-w-md mx-auto">
               <span className="text-4xl mb-3 block">💬</span>
-              <h3 className="font-bold text-lg mb-2">Forum Komunitas</h3>
-              <p className="text-sm text-slate-500 mb-4">Forum diskusi akan hadir di fase pengembangan berikutnya.</p>
-              <Button variant="outline" size="sm">Bergabung di WhatsApp</Button>
+              <h3 className="font-bold text-lg mb-2">{get("community_forum_title", "Forum Komunitas")}</h3>
+              <p className="text-sm text-slate-500 mb-4">{get("community_forum_desc", "Forum diskusi akan hadir di fase pengembangan berikutnya.")}</p>
+              <Button variant="outline" size="sm">{get("community_forum_btn", "Bergabung di WhatsApp")}</Button>
             </Card>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useCMS } from "@/hooks/useCMS";
 
-const roadmapPhases = [
+const defaultRoadmapPhases = [
   {
     phase: "Fase 1 - MVP",
     status: "✅ Selesai",
@@ -66,8 +66,16 @@ const roadmapPhases = [
   },
 ];
 
+const defaultFutureVision = [
+  { icon: "🎓", title: "Ali Travel Academy", desc: "Kursus backpacking online" },
+  { icon: "🏕️", title: "Open Trip & Booking", desc: "Student Immersion booking" },
+  { icon: "📱", title: "Mobile App", desc: "React Native/Expo" },
+];
+
 export default function RoadmapPage() {
-  const { get } = useCMS("roadmap");
+  const { get, getJSON } = useCMS("roadmap");
+  const roadmapPhases = getJSON("roadmap_phases", defaultRoadmapPhases);
+  const futureVision = getJSON("roadmap_future_vision", defaultFutureVision);
   return (
     <div className="pt-20 min-h-screen">
       <section className="relative py-24 overflow-hidden">
@@ -112,13 +120,9 @@ export default function RoadmapPage() {
           {/* Future Vision */}
           <Card className="mt-12 p-8 text-center">
             <span className="text-5xl mb-4 block">🔮</span>
-            <h2 className="text-3xl font-bold mb-4 font-display">Future Vision</h2>
+            <h2 className="text-3xl font-bold mb-4 font-display">{get("roadmap_vision_heading", "Future Vision")}</h2>
             <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-              {[
-                { icon: "🎓", title: "Ali Travel Academy", desc: "Kursus backpacking online" },
-                { icon: "🏕️", title: "Open Trip & Booking", desc: "Student Immersion booking" },
-                { icon: "📱", title: "Mobile App", desc: "React Native/Expo" },
-              ].map((item) => (
+              {futureVision.map((item: { icon: string; title: string; desc: string }) => (
                 <div key={item.title}>
                   <span className="text-4xl mb-3 block">{item.icon}</span>
                   <h4 className="font-bold">{item.title}</h4>

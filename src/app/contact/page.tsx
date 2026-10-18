@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCMS } from "@/hooks/useCMS";
 
-const contacts = [
+const defaultContacts = [
   { icon: "💬", label: "WhatsApp", value: "+62 82 342023235", href: "https://wa.me/6282342023235" },
   { icon: "📧", label: "Email", value: "husainalimubarok28@gmail.com", href: "mailto:husainalimubarok28@gmail.com" },
   { icon: "📸", label: "Instagram", value: "@ali.traveldiary", href: "https://www.instagram.com/ali.traveldiary" },
@@ -16,7 +16,8 @@ const contacts = [
 
 export default function ContactPage() {
   const { t } = useLanguage();
-  const { get } = useCMS("contact");
+  const { get, getJSON } = useCMS("contact");
+  const contacts = getJSON("contact_links", defaultContacts);
 
   return (
     <div className="pt-20 min-h-screen">
@@ -57,31 +58,31 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <Card className="p-8">
-              <h3 className="text-xl font-bold mb-6 font-display">Kirim Pesan</h3>
+              <h3 className="text-xl font-bold mb-6 font-display">{get("contact_form_heading", "Kirim Pesan")}</h3>
               <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
                 <div>
                   <input
                     type="text"
-                    placeholder="Nama"
+                    placeholder={get("contact_name_placeholder", "Nama")}
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-dark-600 bg-white dark:bg-dark-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
                   <input
                     type="email"
-                    placeholder="Email"
+                    placeholder={get("contact_email_placeholder", "Email")}
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-dark-600 bg-white dark:bg-dark-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
                   <textarea
                     rows={4}
-                    placeholder="Pesan..."
+                    placeholder={get("contact_msg_placeholder", "Pesan...")}
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-dark-600 bg-white dark:bg-dark-800 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                   />
                 </div>
                 <Button type="submit" variant="primary" className="w-full">
-                  Kirim Pesan ✈️
+                  {get("contact_submit_btn", "Kirim Pesan ✈️")}
                 </Button>
               </form>
             </Card>
