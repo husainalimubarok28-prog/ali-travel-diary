@@ -7,11 +7,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Country } from "@/types";
 
 export default function CountryDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { t } = useLanguage();
+  const { get } = useCMS("countries");
   const { data: country, loading } = useFetch<Country | null>(`/api/countries/${slug}`, null);
 
   if (loading) {
@@ -27,8 +29,8 @@ export default function CountryDetailPage() {
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <span className="text-6xl block mb-4">😕</span>
-          <h1 className="text-2xl font-bold mb-2">Negara tidak ditemukan</h1>
-          <Link href="/countries"><Button variant="primary">Kembali ke Countries</Button></Link>
+          <h1 className="text-2xl font-bold mb-2">{get("countries_404_title", "Negara tidak ditemukan")}</h1>
+          <Link href="/countries"><Button variant="primary">{get("countries_back_btn", "Kembali ke Countries")}</Button></Link>
         </div>
       </div>
     );
@@ -78,7 +80,7 @@ export default function CountryDetailPage() {
         {/* Cities */}
         {country.cities.length > 0 && (
           <section>
-            <h2 className="text-3xl font-bold mb-6 font-display">Kota di {country.name}</h2>
+            <h2 className="text-3xl font-bold mb-6 font-display">{get("countries_cities_heading", `Kota di ${country.name}`)}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {country.cities.map((city) => (
                 <Link key={city.id} href={`/cities/${country.slug}/${city.slug}`}>
@@ -119,7 +121,7 @@ export default function CountryDetailPage() {
               <p className="font-semibold mb-2">{country.visa} {country.visaCost > 0 && `(Rp ${country.visaCost.toLocaleString()})`}</p>
               {country.documents.length > 0 && (
                 <div className="mt-3">
-                  <h4 className="text-sm font-semibold mb-1">Dokumen:</h4>
+                  <h4 className="text-sm font-semibold mb-1">{get("countries_documents_label", "Dokumen:")}</h4>
                   <ul className="list-disc list-inside text-sm text-slate-500 space-y-1">
                     {country.documents.map((d, i) => <li key={i}>{d}</li>)}
                   </ul>
@@ -142,7 +144,7 @@ export default function CountryDetailPage() {
                   </div>
                 ))}
                 <div className="flex items-center justify-between glass-card px-4 py-3 bg-primary-50 dark:bg-primary-900/20">
-                  <span className="font-bold">Total</span>
+                  <span className="font-bold">{get("countries_total_label", "Total")}</span>
                   <span className="text-primary-600 font-bold text-lg">
                     Rp {country.budgetBreakdown.reduce((a, b) => a + b.amount, 0).toLocaleString()}
                   </span>
@@ -181,7 +183,7 @@ export default function CountryDetailPage() {
         {/* Accommodation */}
         {country.accommodation.length > 0 && (
           <section>
-            <h2 className="text-3xl font-bold mb-6 font-display">Accommodation</h2>
+            <h2 className="text-3xl font-bold mb-6 font-display">{get("countries_accommodation_heading", "Accommodation")}</h2>
             <div className="flex flex-wrap gap-3">
               {country.accommodation.map((a, i) => (
                 <span key={i} className="glass-card px-4 py-2 text-sm">{a}</span>
@@ -194,12 +196,12 @@ export default function CountryDetailPage() {
         <section className="grid md:grid-cols-2 gap-6">
           <Card>
             <span className="text-3xl mb-2 block">📶</span>
-            <h3 className="font-bold mb-1">Internet</h3>
+            <h3 className="font-bold mb-1">{get("countries_internet_label", "Internet")}</h3>
             <p className="text-slate-500">{country.internet}</p>
           </Card>
           <Card>
             <span className="text-3xl mb-2 block">📱</span>
-            <h3 className="font-bold mb-1">SIM Card</h3>
+            <h3 className="font-bold mb-1">{get("countries_sim_label", "SIM Card")}</h3>
             <p className="text-slate-500">{country.simCard}</p>
           </Card>
         </section>
@@ -213,7 +215,7 @@ export default function CountryDetailPage() {
           </Card>
           <Card>
             <span className="text-3xl mb-2 block">💵</span>
-            <h3 className="font-bold mb-1">Money</h3>
+            <h3 className="font-bold mb-1">{get("countries_money_label", "Money")}</h3>
             <p className="text-slate-500">{country.money}</p>
           </Card>
         </section>
@@ -222,14 +224,14 @@ export default function CountryDetailPage() {
         <section className="grid md:grid-cols-2 gap-6">
           <Card>
             <span className="text-3xl mb-2 block">🕌</span>
-            <h3 className="font-bold mb-1">Masjid</h3>
+            <h3 className="font-bold mb-1">{get("countries_mosque_label", "Masjid")}</h3>
             <ul className="list-disc list-inside text-sm text-slate-500 space-y-1">
               {country.mosque.map((m, i) => <li key={i}>{m}</li>)}
             </ul>
           </Card>
           <Card>
             <span className="text-3xl mb-2 block">🥙</span>
-            <h3 className="font-bold mb-1">Halal Food</h3>
+            <h3 className="font-bold mb-1">{get("countries_halal_food_label", "Halal Food")}</h3>
             <p className="text-slate-500">{country.halalFood}</p>
           </Card>
         </section>
@@ -238,12 +240,12 @@ export default function CountryDetailPage() {
         <section className="grid md:grid-cols-2 gap-6">
           <Card className="border-l-4 border-l-green-500">
             <span className="text-3xl mb-2 block">🌟</span>
-            <h3 className="font-bold mb-1">Best Experience</h3>
+            <h3 className="font-bold mb-1">{get("countries_best_exp_label", "Best Experience")}</h3>
             <p className="text-slate-500">{country.bestExperience}</p>
           </Card>
           <Card className="border-l-4 border-l-red-500">
             <span className="text-3xl mb-2 block">😅</span>
-            <h3 className="font-bold mb-1">Worst Experience</h3>
+            <h3 className="font-bold mb-1">{get("countries_worst_exp_label", "Worst Experience")}</h3>
             <p className="text-slate-500">{country.worstExperience}</p>
           </Card>
         </section>
@@ -266,7 +268,7 @@ export default function CountryDetailPage() {
         {/* Hidden Gems */}
         {country.hiddenGems.length > 0 && (
           <section>
-            <h2 className="text-3xl font-bold mb-6 font-display">💎 Hidden Gems</h2>
+            <h2 className="text-3xl font-bold mb-6 font-display">{get("countries_hidden_gems_heading", "💎 Hidden Gems")}</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {country.hiddenGems.map((gem, i) => (
                 <Card key={i} className="flex items-start gap-3">
@@ -280,7 +282,7 @@ export default function CountryDetailPage() {
 
         {/* Ratings */}
         <section>
-          <h2 className="text-3xl font-bold mb-6 font-display">Rating</h2>
+          <h2 className="text-3xl font-bold mb-6 font-display">{get("countries_rating_heading", "Rating")}</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {Object.entries(country.ratings).map(([key, value]) => (
               <Card key={key} className="text-center">
@@ -296,9 +298,9 @@ export default function CountryDetailPage() {
 
         {/* CTAs */}
         <section className="flex flex-wrap gap-4 justify-center">
-          <Link href={`/budget/${country.slug}`}><Button variant="primary" size="lg">💰 Lihat Budget Detail</Button></Link>
-          <Link href="/world-map"><Button variant="outline" size="lg">🗺️ Kembali ke Peta</Button></Link>
-          <Link href="/countries"><Button variant="outline" size="lg">🌍 Semua Negara</Button></Link>
+          <Link href={`/budget/${country.slug}`}><Button variant="primary" size="lg">{get("countries_cta_budget", "💰 Lihat Budget Detail")}</Button></Link>
+          <Link href="/world-map"><Button variant="outline" size="lg">{get("countries_cta_map", "🗺️ Kembali ke Peta")}</Button></Link>
+          <Link href="/countries"><Button variant="outline" size="lg">{get("countries_cta_all", "🌍 Semua Negara")}</Button></Link>
         </section>
       </div>
     </div>

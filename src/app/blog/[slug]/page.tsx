@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/Button";
+import { useCMS } from "@/hooks/useCMS";
 
 interface BlogPostDetail {
   id: string;
@@ -23,6 +24,7 @@ interface BlogPostDetail {
 
 export default function BlogDetailPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { get } = useCMS("blog");
   const [post, setPost] = useState<BlogPostDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,8 +48,8 @@ export default function BlogDetailPage() {
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <span className="text-6xl block mb-4">😕</span>
-          <h1 className="text-2xl font-bold mb-2">Artikel tidak ditemukan</h1>
-          <Link href="/blog"><Button variant="primary">Kembali ke Blog</Button></Link>
+          <h1 className="text-2xl font-bold mb-2">{get("blog_404_title", "Artikel tidak ditemukan")}</h1>
+          <Link href="/blog"><Button variant="primary">{get("blog_back_btn", "Kembali ke Blog")}</Button></Link>
         </div>
       </div>
     );
@@ -67,7 +69,7 @@ export default function BlogDetailPage() {
             <div className="flex items-center gap-4 text-slate-400 text-sm">
               <span>✍️ {authorName}</span>
               <span>📅 {new Date(post.publishedAt).toLocaleDateString("id-ID")}</span>
-              <span>📖 {post.readingTime} menit baca</span>
+              <span>📖 {post.readingTime} {get("blog_reading_time_suffix", "menit baca")}</span>
             </div>
           </motion.div>
         </div>
@@ -101,7 +103,7 @@ export default function BlogDetailPage() {
         </div>
 
         <div className="flex justify-between items-center mt-12 pt-8 border-t border-slate-200 dark:border-dark-700">
-          <Link href="/blog"><Button variant="outline">← Kembali ke Blog</Button></Link>
+          <Link href="/blog"><Button variant="outline">← {get("blog_back_btn", "Kembali ke Blog")}</Button></Link>
         </div>
       </article>
     </div>

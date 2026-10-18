@@ -6,10 +6,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { Country } from "@/types";
 
 export default function CountryBudgetPage() {
   const { country: slug } = useParams<{ country: string }>();
+  const { get } = useCMS("budget");
   const { data: country, loading } = useFetch<Country | null>(`/api/countries/${slug}`, null);
 
   if (loading) {
@@ -25,7 +27,7 @@ export default function CountryBudgetPage() {
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <span className="text-6xl block mb-4">😕</span>
-          <h1 className="text-2xl font-bold mb-2">Negara tidak ditemukan</h1>
+          <h1 className="text-2xl font-bold mb-2">{get("budget_404_title", "Negara tidak ditemukan")}</h1>
           <Link href="/budget"><Button variant="primary">Kembali</Button></Link>
         </div>
       </div>
@@ -48,7 +50,7 @@ export default function CountryBudgetPage() {
       <div className="container-custom section-padding space-y-8">
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold font-display">Rincian Biaya</h2>
+            <h2 className="text-2xl font-bold font-display">{get("budget_detail_heading", "Rincian Biaya")}</h2>
             {country.budgetBreakdown.length > 0 ? (
               country.budgetBreakdown.map((item, i) => (
                 <div key={i} className="flex items-center justify-between glass-card px-4 py-3">
@@ -57,10 +59,10 @@ export default function CountryBudgetPage() {
                 </div>
               ))
             ) : (
-              <p className="text-slate-500">Data budget akan segera dilengkapi.</p>
+              <p className="text-slate-500">{get("budget_empty_text", "Data budget akan segera dilengkapi.")}</p>
             )}
             <div className="flex items-center justify-between glass-card px-4 py-3 bg-primary-50 dark:bg-primary-900/20">
-              <span className="font-bold">Total Estimasi</span>
+              <span className="font-bold">{get("budget_total_label", "Total Estimasi")}</span>
               <span className="text-primary-600 font-bold text-xl">Rp {country.budget.toLocaleString()}</span>
             </div>
           </div>
@@ -68,16 +70,16 @@ export default function CountryBudgetPage() {
           <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 flex items-center justify-center">
             <div className="text-center">
               <span className="text-6xl block mb-4">📊</span>
-              <p className="text-lg font-medium">Grafik Biaya</p>
+              <p className="text-lg font-medium">{get("budget_chart_label", "Grafik Biaya")}</p>
               <p className="text-sm text-slate-500">(Chart akan ditampilkan di sini)</p>
             </div>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-4">
-          <Link href="/calculator"><Button variant="primary">📊 Backpacking Calculator</Button></Link>
-          <Link href={`/countries/${country.slug}`}><Button variant="outline">← Detail {country.name}</Button></Link>
-          <Link href="/budget"><Button variant="outline">💰 Semua Budget</Button></Link>
+          <Link href="/calculator"><Button variant="primary">{get("budget_cta_calculator", "📊 Backpacking Calculator")}</Button></Link>
+          <Link href={`/countries/${country.slug}`}><Button variant="outline">← {get("budget_cta_detail", "Detail")} {country.name}</Button></Link>
+          <Link href="/budget"><Button variant="outline">{get("budget_cta_all", "💰 Semua Budget")}</Button></Link>
         </div>
       </div>
     </div>

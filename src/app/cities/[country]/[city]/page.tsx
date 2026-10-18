@@ -6,10 +6,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { City } from "@/types";
 
 export default function CityPage() {
   const { country, city } = useParams<{ country: string; city: string }>();
+  const { get } = useCMS("cities");
   const { data: cityData, loading } = useFetch<City | null>(`/api/cities/${city}`, null);
 
   if (loading) {
@@ -25,7 +27,7 @@ export default function CityPage() {
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <span className="text-6xl block mb-4">😕</span>
-          <h1 className="text-2xl font-bold mb-2">Kota tidak ditemukan</h1>
+          <h1 className="text-2xl font-bold mb-2">{get("cities_404_title", "Kota tidak ditemukan")}</h1>
           <Link href="/countries"><Button variant="primary">Kembali</Button></Link>
         </div>
       </div>
@@ -51,7 +53,7 @@ export default function CityPage() {
 
       <div className="container-custom section-padding space-y-12">
         <section>
-          <h2 className="text-3xl font-bold mb-6 font-display">Highlights</h2>
+          <h2 className="text-3xl font-bold mb-6 font-display">{get("cities_highlights_heading", "Highlights")}</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {cityData.highlights.map((h, i) => (
               <Card key={i} className="flex items-center gap-3">
@@ -63,7 +65,7 @@ export default function CityPage() {
         </section>
 
         <section>
-          <h2 className="text-3xl font-bold mb-6 font-display">Galeri</h2>
+          <h2 className="text-3xl font-bold mb-6 font-display">{get("cities_gallery_heading", "Galeri")}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="aspect-video rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-dark-700 dark:to-dark-800 flex items-center justify-center">
@@ -75,7 +77,7 @@ export default function CityPage() {
 
         <section className="flex flex-wrap gap-4 justify-center">
           <Link href={`/countries/${cityData.countrySlug}`}><Button variant="outline">← Kembali ke {cityData.countryName}</Button></Link>
-          <Link href="/world-map"><Button variant="primary">🗺️ Peta Interaktif</Button></Link>
+          <Link href="/world-map"><Button variant="primary">{get("cities_map_btn", "🗺️ Peta Interaktif")}</Button></Link>
         </section>
       </div>
     </div>

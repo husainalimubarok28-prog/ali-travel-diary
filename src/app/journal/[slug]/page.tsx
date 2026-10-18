@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useFetch } from "@/hooks/useFetch";
+import { useCMS } from "@/hooks/useCMS";
 import type { JournalEntry } from "@/types";
 
 export default function JournalDetailPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { get } = useCMS("journal");
   const { data: entry, loading } = useFetch<JournalEntry | null>(`/api/journal/${slug}`, null);
 
   if (loading) {
@@ -24,8 +26,8 @@ export default function JournalDetailPage() {
       <div className="pt-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <span className="text-6xl block mb-4">😕</span>
-          <h1 className="text-2xl font-bold mb-2">Entry tidak ditemukan</h1>
-          <Link href="/journal"><Button variant="primary">Kembali</Button></Link>
+          <h1 className="text-2xl font-bold mb-2">{get("journal_404_title", "Entry tidak ditemukan")}</h1>
+          <Link href="/journal"><Button variant="primary">{get("journal_back_btn", "Kembali")}</Button></Link>
         </div>
       </div>
     );
@@ -60,7 +62,7 @@ export default function JournalDetailPage() {
         </Card>
 
         <div className="flex justify-between mt-8">
-          <Link href="/journal"><Button variant="outline">← Semua Journal</Button></Link>
+          <Link href="/journal"><Button variant="outline">← {get("journal_all_btn", "Semua Journal")}</Button></Link>
         </div>
       </article>
     </div>
