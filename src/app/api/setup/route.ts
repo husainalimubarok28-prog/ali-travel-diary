@@ -174,7 +174,9 @@ export async function GET() {
       const match = sql.match(/CREATE TABLE IF NOT EXISTS "(\w+)"/);
       const tableName = match ? match[1] : "unknown";
       try {
-        await client.execute(sql);
+        // Drop and recreate to fix schema mismatches
+        try { await client.execute(`DROP TABLE IF EXISTS "${tableName}"`); } catch (e) {}
+        await client.execute(sql.replace('CREATE TABLE IF NOT EXISTS', 'CREATE TABLE'));
         results.push(`✓ ${tableName}`);
       } catch (e) {
         results.push(`✗ ${tableName}: ${String(e)}`);
