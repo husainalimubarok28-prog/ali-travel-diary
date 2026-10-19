@@ -176,7 +176,7 @@ export async function GET() {
       try {
         // Drop and recreate to fix schema mismatches
         try { await client.execute(`DROP TABLE IF EXISTS "${tableName}"`); } catch (e) {}
-        await client.execute(sql.replace('CREATE TABLE IF NOT EXISTS', 'CREATE TABLE'));
+        await client.execute(sql);
         results.push(`✓ ${tableName}`);
       } catch (e) {
         results.push(`✗ ${tableName}: ${String(e)}`);
