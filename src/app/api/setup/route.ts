@@ -11,7 +11,7 @@ function getClient(): Client {
 }
 
 const TABLES = [
-  `CREATE TABLE IF NOT EXISTS "User" (
+  `CREATE TABLE "User" (
     "id" TEXT PRIMARY KEY,
     "email" TEXT UNIQUE NOT NULL,
     "name" TEXT NOT NULL,
